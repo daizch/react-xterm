@@ -1,13 +1,12 @@
-/// <reference types="react" />
 import * as React from 'react';
 import { Terminal } from 'xterm';
 export interface IXtermProps extends React.DOMAttributes<{}> {
-    onChange?: (e) => void;
-    onInput?: (e) => void;
+    onChange?: (e: any) => void;
+    onInput?: (e: any) => void;
     onFocusChange?: Function;
-    addons?: string[];
-    onScroll?: (e) => void;
-    onContextMenu?: (e) => void;
+    addons?: any[];
+    onScroll?: (e: any) => void;
+    onContextMenu?: (e: any) => void;
     options?: any;
     path?: string;
     value?: string;

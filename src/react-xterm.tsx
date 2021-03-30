@@ -10,7 +10,7 @@ export interface IXtermProps extends React.DOMAttributes<{}> {
     onChange?: (e) => void;
     onInput?: (e) => void;
     onFocusChange?: Function;
-    addons?: string[];
+    addons?: any[];
     onScroll?: (e) => void;
     onContextMenu?: (e) => void;
     options?: any;
@@ -34,24 +34,23 @@ export default class XTerm extends React.Component<IXtermProps, IXtermState> {
     }
 
     applyAddon(addon) {
-        Terminal.applyAddon(addon);
+        this.xterm.loadAddon(addon);
     }
     componentDidMount() {
+        this.xterm = new Terminal(this.props.options);
         if (this.props.addons) {
-            this.props.addons.forEach(s => {
-                const addon = require(`xterm/dist/addons/${s}/${s}.js`);
-                Terminal.applyAddon(addon);
+            this.props.addons.forEach(addon => {
+                this.xterm.loadAddon(addon);
             });
         }
-        this.xterm = new Terminal(this.props.options);
         this.xterm.open(this.container);
-        this.xterm.on('focus', this.focusChanged.bind(this, true));
-        this.xterm.on('blur', this.focusChanged.bind(this, false));
+        this.container.addEventListener('focus',this.focusChanged.bind(this, true))
+        this.container.addEventListener('blur',this.focusChanged.bind(this, true))
         if (this.props.onContextMenu) {
             this.xterm.element.addEventListener('contextmenu', this.onContextMenu.bind(this));
         }
         if (this.props.onInput) {
-            this.xterm.on('data', this.onInput);
+            this.xterm.onData(this.onInput);
         }
         if (this.props.value) {
             this.xterm.write(this.props.value);
@@ -60,7 +59,7 @@ export default class XTerm extends React.Component<IXtermProps, IXtermState> {
     componentWillUnmount() {
         // is there a lighter-weight way to remove the cm instance?
         if (this.xterm) {
-            this.xterm.destroy();
+            this.xterm.dispose();
             this.xterm = null;
         }
     }
